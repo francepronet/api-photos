@@ -14,13 +14,13 @@
 
   <testsuites>
     <testsuite name="api-fpn-pictures Test Suite">
-      <directory>./lib/Fpn/ApiClient/Pictures/Tests/</directory>
+      <directory>./Tests/</directory>
     </testsuite>
   </testsuites>
 
   <filter>
     <whitelist>
-      <directory suffix=".php">./lib/Fpn/ApiClient/Pictures/</directory>
+      <directory suffix=".php">./</directory>
     </whitelist>
   </filter>
 </phpunit>
