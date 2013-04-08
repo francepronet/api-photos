@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit backupGlobals="false"
+  backupStaticAttributes="false"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  processIsolation="false"
+  stopOnFailure="false"
+  syntaxCheck="false"
+  bootstrap="vendor/autoload.php"
+  >
+
+  <testsuites>
+    <testsuite name="api-fpn-pictures Test Suite">
+      <directory>./lib/Fpn/ApiClient/Pictures/Tests/</directory>
+    </testsuite>
+  </testsuites>
+
+  <filter>
+    <whitelist>
+      <directory suffix=".php">./lib/Fpn/ApiClient/Pictures/</directory>
+    </whitelist>
+  </filter>
+</phpunit>

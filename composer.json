@@ -1,0 +1,33 @@
+{
+  "name": "francepronet/api-photos-client",
+  "description": "Client pour l'API photos FranceProNet",
+  "authors": [
+    {
+    "name": "chadrien",
+    "email": "hadrien.collongues@francepronet.com"
+  }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "francepronet/api-fpn-core": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/php-code-coverage": "1.3.*@dev",
+    "phpunit/phpunit-mock-objects": "1.3.*@dev",
+    "phpunit/php-timer": "dev-master",
+    "sebastian/diff": "1.0.*@dev",
+    "sebastian/exporter": "1.0.*@dev",
+    "phpunit/phpunit": "3.8.*@dev"
+  },
+  "autoload": {
+    "psr-0": {
+      "Fpn\\ApiClient\\Pictures\\": "lib/"
+    }
+  },
+  "repositories": [
+    {
+    "type": "composer",
+    "url": "http://francepronet:FpN09081948@packages.netfpn.net"
+  }
+  ]
+}
