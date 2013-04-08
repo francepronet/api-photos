@@ -21,7 +21,7 @@
   },
   "autoload": {
     "psr-0": {
-      "Fpn\\ApiClient\\Pictures\\": "lib/"
+      "Fpn\\ApiClient\\Pictures\\": ""
     }
   },
   "repositories": [
