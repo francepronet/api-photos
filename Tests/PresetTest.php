@@ -135,4 +135,27 @@ class PresetTest extends \PHPUnit_Framework_TestCase
             ->fetch(3)
             ;
     }
+
+    public function testCanApplyPreset()
+    {
+        $preset = json_decode('{ "id": 3 }');
+        $image  = json_decode('{ "image": "'.base64_encode('/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAJYAyADAREAAhEBAxEB/8QAHwAAAQMFAQEBAAAAAAAAAAAAAAIDBgEEBQcICQoL/8QAbRAAAQMCBQMCAwQECAsDBAIjAQIDBAURAAYHEiEIEzEiQQkUURUyYXEjQoGRFhgaaKGosegKFyQzUliXwdHW8CVi4SY0NTdDcoK2JzZT8RkoOEZ3hoemxkRHSFZjc5KyVGZndHaDiKKjpMLH/8QAHgEBAAICAwEBAQAAAAAAAAAAAAIDAQQFBggHCQr/xACAEQABAQYDAwcHAwkPDAoPAg8BAgADBAURIQYS...').'" }');
+
+        $apiClient = $this->getMock('Fpn\ApiClient\Core\ApiClient', array('request'));
+        $apiClient
+            ->expects($this->any())
+            ->method('request')
+            ->will($this->onConsecutiveCalls($preset, $image))
+            ;
+
+        $this->preset
+            ->setApiClient($apiClient)
+            ->fetch(3)
+            ->apply('/tmp/foo.png', '/tmp/foo.jpg')
+            ;
+
+        $this->assertEquals($image->image, file_get_contents('/tmp/foo.jpg'));
+
+        unlink('/tmp/foo.jpg');
+    }
 }

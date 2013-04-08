@@ -13,6 +13,8 @@ class Preset extends ApiObject
     protected $createUrl   = '/presets';
     protected $updateUrl   = '/presets/%d';
 
+    private $applyUrl = '/presets/%d/apply';
+
     private $name;
     private $posId;
     private $filters = array();
@@ -49,11 +51,28 @@ class Preset extends ApiObject
             foreach ($preset->filters as &$filter) {
                 $casterFilter = new Filter();
                 Caster::cast($filter, $casterFilter);
+                $casterFilter->setPresetId($this->id);
+
                 $filter = $casterFilter;
             }
         }
 
         return $presets;
+    }
+
+    public function apply($source, $dest)
+    {
+        if (empty($this->id)) {
+            throw new \InvalidArgumentException('Cannot apply a preset if no preset is loaded');
+        }
+
+        $datas = array(
+            'image' => "@{$source}"
+        );
+
+        $response = $this->apiClient->request('POST', sprintf($this->applyUrl, $this->id), $datas);
+
+        file_put_contents($dest, $response->image);
     }
 
     public function getName()
