@@ -11,13 +11,14 @@ Simple d'utilisation, il suffit de l'instancier et via quelques méthodes on peu
 
 use Fpn\ApiClient\Pictures\Preset;
 
-$preset = new Preset();
-
 // récupère le preset #3
+$preset = new Preset();
 $preset->fetch(3);
 echo $preset->getId(); // "3"
+var_dump($preset->getFilters()); // array de tous les filtres du preset (objets Filtre, cf. ci-après)
 
 // récupère la page 2 d'une liste de preset, avec 10 presets par page
+$preset = new Preset();
 $presets = $preset->fetchAll(2, 10); // les paramètres sont optionnels et ont pour valeur par défaut : page = 1, limit = 20
 
 // créé un nouveau preset
@@ -49,5 +50,55 @@ $preset = new Preset();
 $preset
     ->fetch(3)
     ->apply('/path/to/source/image.jpg', '/path/to/modified/image.jpg')
+    ;
+```
+
+## La classe Filtre
+
+Comme pour la classe Preset, on utilise une instance de la classe Filter :
+
+```php
+<?php
+
+use Fpn\ApiClient\Pictures\Preset;
+use Fpn\ApiClient\Pictures\Filter;
+
+// récupérer les filtres du preset #3
+$preset = new Preset();
+$preset->fetch(3);
+$filters = $presets->getFilters();
+
+// récupérer le filtre #4 appartenant au preset #3
+$filter = new Filter();
+$filter
+    ->setPresertId(3)
+    ->fetch(4)
+    ;
+echo $filter->getId(); // "4"
+
+// ajouter un filtre au preset #3
+$filter = new Filter();
+$filter
+    ->setPresetId(3)
+    ->setType('addBorder')
+    ->setParams(array(5))
+    ->save()
+    ;
+
+// modifier le filtre #4 appartenant au preset #3
+$filter = new Filter();
+$filter
+    ->setPresetId(3)
+    ->fetch(4)
+    ->setType('roundCorners')
+    ->save()
+    ;
+
+// supprimer le filtre #4 appartenant au preset #3
+$filter = new Filter();
+$filter
+    ->setPresetId(3)
+    ->fetch(4)
+    ->delete()
     ;
 ```
