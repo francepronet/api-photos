@@ -3,9 +3,9 @@
   "description": "Client pour l'API photos FranceProNet",
   "authors": [
     {
-    "name": "chadrien",
-    "email": "hadrien.collongues@francepronet.com"
-  }
+      "name": "chadrien",
+      "email": "hadrien.collongues@francepronet.com"
+    }
   ],
   "minimum-stability": "dev",
   "require": {
@@ -25,8 +25,8 @@
   "target-dir": "Fpn/ApiClient/Pictures",
   "repositories": [
     {
-    "type": "composer",
-    "url": "http://francepronet:FpN09081948@packages.netfpn.net"
-  }
+      "type": "vcs",
+      "url": "https://github.com/francepronet/api-core"
+    }
   ]
 }
