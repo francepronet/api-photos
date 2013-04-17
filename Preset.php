@@ -72,7 +72,7 @@ class Preset extends ApiObject
 
         $response = $this->apiClient->request('POST', sprintf($this->applyUrl, $this->id), $datas);
 
-        file_put_contents($dest, $response->image);
+        file_put_contents($dest, base64_decode($response->image));
     }
 
     public function getName()
