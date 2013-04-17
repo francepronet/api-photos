@@ -1,4 +1,4 @@
-# Client pour l'API photos de FranceProNet
+# Client pour l'API photos de FranceProNet [![Build Status](https://travis-ci.org/francepronet/api-photos.png?branch=master)](https://travis-ci.org/francepronet/api-photos)
 
 ## Documentation
 
