@@ -32,8 +32,10 @@ class Filter extends ApiObject
     {
         $this->checkPresetId();
 
+        $queryString = "?page={$page}&limit={$limit}";
+
         $filters  = array();
-        $_filters = $this->apiClient->request('GET', sprintf("{$this->fetchAllUrl}?page={$page}&limit={$limit}", $this->presetId))->items;
+        $_filters = $this->apiClient->request('GET', sprintf("{$this->fetchAllUrl}{$queryString}", $this->presetId))->items;
 
         foreach ($_filters as $filter) {
             $casterFilter = new Filter();

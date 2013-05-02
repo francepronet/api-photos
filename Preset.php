@@ -43,9 +43,9 @@ class Preset extends ApiObject
         return $this;
     }
 
-    public function fetchAll($page = 1, $limit = 20)
+    public function fetchAll($page = 1, $limit = 20, $query = null)
     {
-        $presets = parent::fetchAll($page, $limit);
+        $presets = parent::fetchAll($page, $limit, $query);
 
         foreach ($presets as $preset) {
             foreach ($preset->filters as &$filter) {
