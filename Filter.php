@@ -51,11 +51,11 @@ class Filter extends ApiObject
         $this->checkPresetId();
 
         $datas = array(
-            'filter' => array(
+            'filter' => rawurlencode(serialize(array(
                 'type'   => $this->type,
                 'params' => $this->params,
                 'image'  => $this->image
-            )
+            )))
         );
 
         if (empty($this->id)) {

@@ -22,10 +22,10 @@ class Preset extends ApiObject
     public function save()
     {
         $datas = array(
-            'preset' => array(
+            'preset' => rawurlencode(serialize(array(
                 'name'  => $this->name,
                 'posId' => $this->posId
-            )
+            )))
         );
 
         $this->saveItem($datas);
