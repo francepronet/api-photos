@@ -12,6 +12,7 @@ class Preset extends ApiObject
     protected $fetchAllUrl = '/presets';
     protected $createUrl   = '/presets';
     protected $updateUrl   = '/presets/%d';
+    protected $deleteUrl   = '/presets/%d';
 
     private $applyUrl = '/presets/%d/apply';
 
