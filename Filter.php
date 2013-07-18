@@ -1,120 +1,130 @@
 <?php
 
-namespace Fpn\Prettifier\BackBundle\Controller;
+namespace Fpn\ApiClient\Pictures;
 
-use Fpn\ApiClient\Pictures\Filter;
-use Fpn\ApiClient\Pictures\Preset;
-use Guzzle\Http\Client;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Fpn\ApiClient\Core\ApiObject\ApiObject;
+use Fpn\ApiClient\Core\Utility\Caster;
 
-/**
- * @Route("/filters", host="%admin_host%")
- */
-class FiltersController extends Controller
+class Filter extends ApiObject
 {
-    /**
-     * @Route("/", name="admin_filters")
-     * @Template()
-     */
-    public function indexAction()
+    protected $fetchUrl    = '/presets/%d/filters/%d';
+    protected $fetchAllUrl = '/presets/%d/filters';
+    protected $createUrl   = '/presets/%d/filters';
+    protected $updateUrl   = '/presets/%d/filters/%d';
+
+    private $presetId;
+    private $type;
+    private $params = array();
+    private $image;
+
+    public function fetch($id)
     {
-        $apiUrl = sprintf('http%s://%s:%s', ($this->container->getParameter('fpn_api_use_ssl') ? 's' : null), $this->container->getParameter('fpn_api_host'), $this->container->getParameter('fpn_api_port'));
+        $this->checkPresetId();
 
-        $client   = new Client($apiUrl);
-        $request  = $client->get('/filters?page=1&limit=200000');
-        $response = $request->send();
+        $filter = $this->apiClient->request('GET', sprintf($this->fetchUrl, $this->presetId, $id));
 
-        $responseArray = $response->json();
-        $items = $responseArray['items'];
+        Caster::cast($filter, $this);
 
-        $filters = array();
-
-        return array(
-            'filters' => $filters,
-        );
+        return $this;
     }
 
-    /**
-     * @Route("/edit{filterId}", name="admin_filters_edit")
-     * @Route("/add", name="admin_filters_add")
-     * @Template()
-     */
-    public function editAction(Request $request, $filterId = null)
+    public function fetchAll($page = 1, $limit = 20)
     {
-        $filter = new Filter();
-        $filter->setApiClient($this->get('fpn_api'));
+        $this->checkPresetId();
 
-        if (null !== $filterId) {
-            $filter->fetch($filterId);
+        $queryString = "?page={$page}&limit={$limit}";
+
+        $filters  = array();
+        $_filters = $this->apiClient->request('GET', sprintf("{$this->fetchAllUrl}{$queryString}", $this->presetId))->items;
+
+        foreach ($_filters as $filter) {
+            $casterFilter = new Filter();
+            Caster::cast($filter, $casterFilter);
+            $filters[] = $casterFilter;
         }
 
-        $preset = new Preset();
-        $preset->setApiClient($this->get('fpn_api'));
-        $_presets = $preset->fetchAll();
-        $presets = array_combine(
-            array_map(
-                function ($preset) {
-                    return $preset->getId();
-                },
-                $_presets
-            ),
-            array_map(
-                function ($preset) {
-                    return sprintf('%s - %s', $preset->getId(), $preset->getName());
-                },
-                $_presets
-            )
+        return $filters;
+    }
+
+    public function save()
+    {
+        $this->checkPresetId();
+
+        $datas = array(
+            'filter' => rawurlencode(serialize(array(
+                'type'   => $this->type,
+                'params' => $this->params,
+                'image'  => $this->image
+            )))
         );
 
-        $filterTypes = array(
-            'resize',
-            'resizeAndFill',
-            'roundCorners',
-            'addBorder',
-            'addBanner',
-            'addWatermark',
-        );
-
-        $form = $this->createFormBuilder($filter)
-            ->add('presetId', 'choice', array(
-                'choices' => $presets,
-                'label' => 'Appartient au preset'
-            ))
-            ->add('type', 'choice', array(
-                'label' => 'Type de filtre',
-                'choices' => array_combine($filterTypes, $filterTypes),
-            ))
-            ->add('params', null, array('label' => 'Paramètres du filtre'))
-            ->add('image', 'file', array('label' => 'Image', 'required' => false))
-            ->add('Enregistrer', 'submit', array('attr' => array('class' => 'btn btn-success')))
-            ->getForm()
-            ;
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (null != $filter->getImage() && $filter->getImage()->isValid()) {
-                $tmpImage = realpath(sprintf('%s/%s', sys_get_temp_dir(), $filter->getImage()->getClientOriginalName()));
-
-                $filter->getImage()->move(sys_get_temp_dir(), $filter->getImage()->getClientOriginalName());
-                $filter->setImage($tmpImage);
-            }
-            $filter->save();
-
-            if (isset($tmpImage)) {
-                unlink($tmpImage);
-            }
-
-            $this->get('session')->getFlashBag()->add('success', 'Filtre enregistré avec succès.');
-
-            return $this->redirect($this->generateUrl('admin_filters', array()));
+        if (null !== $this->image) {
+            $datas['upload'] = $this->image;
         }
 
-        return array(
-            'form' => $form->createView(),
-            'filterId' => $filterId,
-        );
+        if (empty($this->id)) {
+            $method = 'POST';
+            $url    = sprintf($this->createUrl, $this->presetId);
+        } else {
+            $method = 'PUT';
+            $url    = sprintf($this->updateUrl, $this->presetId, $this->id);
+        }
+
+        $filter = $this->apiClient->request($method, $url, $datas);
+
+        Caster::cast($filter, $this);
+
+        return $this;
+    }
+
+    private function checkPresetId()
+    {
+        if (empty($this->presetId)) {
+            throw new \InvalidArgumentException('A preset ID must be defined before calling any API call.');
+        }
+    }
+
+    public function getPresetId()
+    {
+        return $this->presetId;
+    }
+
+    public function setPresetId($presetId)
+    {
+        $this->presetId = $presetId;
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    public function setParams($params)
+    {
+        $this->params = $params;
+        return $this;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
     }
 }
