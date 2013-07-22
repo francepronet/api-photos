@@ -11,6 +11,7 @@ class Filter extends ApiObject
     protected $fetchAllUrl = '/presets/%d/filters';
     protected $createUrl   = '/presets/%d/filters';
     protected $updateUrl   = '/presets/%d/filters/%d';
+    protected $deleteteUrl = '/presets/%d/filters/%d';
 
     private $presetId;
     private $type;
@@ -77,6 +78,19 @@ class Filter extends ApiObject
         return $this;
     }
 
+
+    public function delete()
+    {
+        if (empty($this->id)) {
+            throw new \InvalidArgumentException('Cannot delete an unset element.');
+        }
+
+        $response = $this->apiClient->request('DELETE', sprintf($this->deleteUrl, $this->presetId, $this->id));
+
+        Caster::cast($response, $this);
+
+        return $this;
+    }
     private function checkPresetId()
     {
         if (empty($this->presetId)) {
