@@ -4,6 +4,7 @@ namespace Fpn\ApiClient\Pictures;
 
 use Fpn\ApiClient\Core\ApiObject\ApiObject;
 use Fpn\ApiClient\Core\Utility\Caster;
+use Fpn\ApiClient\Pictures\Preset;
 
 class Filter extends ApiObject
 {
@@ -17,6 +18,7 @@ class Filter extends ApiObject
     private $type;
     private $params = array();
     private $image;
+    private $preset;
 
     public function fetch($id)
     {
@@ -139,6 +141,19 @@ class Filter extends ApiObject
     public function setImage($image)
     {
         $this->image = $image;
+        return $this;
+    }
+
+    public function getPreset()
+    {
+        return $this->preset;
+    }
+    
+    public function setPreset(Preset $preset)
+    {
+        $this->preset = $preset;
+        $this->presetId = $preset->getId();
+    
         return $this;
     }
 }
