@@ -12,7 +12,7 @@ class Filter extends ApiObject
     protected $fetchAllUrl = '/presets/%d/filters';
     protected $createUrl   = '/presets/%d/filters';
     protected $updateUrl   = '/presets/%d/filters/%d';
-    protected $deleteteUrl = '/presets/%d/filters/%d';
+    protected $deleteUrl = '/presets/%d/filters/%d';
 
     private $presetId;
     private $type;
@@ -148,12 +148,12 @@ class Filter extends ApiObject
     {
         return $this->preset;
     }
-    
+
     public function setPreset(Preset $preset)
     {
         $this->preset = $preset;
         $this->presetId = $preset->getId();
-    
+
         return $this;
     }
 }
